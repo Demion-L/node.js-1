@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "sourceMap": true
+    //"outFile": "bundle.js"
+  }
+  // "files": [
+  //   "src/app.ts"
+  // ]
+}
