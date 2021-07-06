@@ -45,7 +45,12 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     case "DELETE": {
 
         fs.unlink("input.txt", function (err: Error) {
-          if (err) return console.error(err);
+          if (err) {
+              res.writeHead(404, "File not found")
+              res.write(err)
+              res.end()
+              return console.error(err);
+          }
           res.end()
         });
 
