@@ -18,7 +18,8 @@ const server = http.createServer((req: IncomingMessage, res: ServerResponse) => 
       try {
         fs.readFile("input.txt", "utf-8", function (err: Error, data: Buffer):void {
           if (err) return console.error(err);
-          console.log(data.toString());
+          res.write(data.toString());
+          res.end(`Data: ${data.toString()}`)
         });
       } catch (error) {
          console.error(error);
