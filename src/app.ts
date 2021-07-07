@@ -2,6 +2,7 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import * as fs from 'fs';
 const constants = require("./constants");
 
+
 function notFound(res):void {
     res.writeHead(404, 'Not found\n', {'Content-Type': 'text/plain'});
     res.end();
@@ -32,10 +33,16 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     case 'PATCH': {
 
         const additionalData: string = 'Hello, Node.js!!!'
-        fs.appendFile(constants.file, additionalData,{flag: 'r+'}, function (err: Error): void {
-          if (err) console.error(err);
-          res.end()
-        });
+        fs.access(constants.file, (err) => {
+            if(err) {
+                console.error(err)
+                return
+            }
+            fs.appendFile(constants.file, additionalData, function (err: Error): void {
+                if (err) console.error(err);
+                res.end()
+            });
+        })
 
       break;
     }
@@ -46,7 +53,7 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
               res.writeHead(404, 'File not found')
               res.write(err)
               res.end()
-              return console.error(err);
+              console.error(err);
           }
           res.end()
         });
