@@ -32,7 +32,7 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
       fs.access(file, (err) => {
         if (err) {
           console.error(err);
-          return;
+          return null;
         }
         fs.appendFile(file, additionalData, function (err: Error): void {
           if (err) console.error(err);
