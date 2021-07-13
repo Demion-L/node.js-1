@@ -1,41 +1,63 @@
-const http = require("http"),
-  fs = require("fs");
+import { createServer, IncomingMessage, ServerResponse } from 'http';
+import * as fs from 'fs';
+import { host, port, file, encoding } from './constants';
 
-const host = "127.0.0.1";
-const port = 7000;
-
-function notFound(res) {
-  res.statusCode = 404;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Not found\n");
+function notFound(res: ServerResponse): void {
+  res.writeHead(404, 'Not found\n', { 'Content-Type': 'text/plain' });
+  res.end();
 }
 
-const server = http.createServer((req, res) => {
+const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   switch (req.method) {
-    case "GET": {
-      try {
-        fs.readFile("input.txt", function (err, data) {
-          if (err) return console.error(err);
-          console.log(data.toString());
-        });
-      } catch (error) {
-         console.error(error);
-      }
+    case 'GET': {
+      fs.readFile(file, encoding, function (err: Error, data: string): void {
+        if (err) return console.error(err);
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end(data);
+      });
 
       break;
     }
-    case "POST": {
-       
+    case 'POST': {
+      const message: string = 'Hello World!';
+      fs.writeFile(file, message, function (err: Error): void {
+        if (err) console.error(err);
+        res.end();
+      });
+
       break;
     }
-    case "PATCH": {
+    case 'PATCH': {
+      const additionalData: string = 'Hello, Node.js!!!';
+      fs.access(file, (err) => {
+        if (err) {
+          console.error(err);
+          return null;
+        }
+        fs.appendFile(file, additionalData, function (err: Error): void {
+          if (err) console.error(err);
+          res.end();
+        });
+      });
+
       break;
     }
-    case "DELETE": {
+    case 'DELETE': {
+      fs.unlink(file, function (err: Error) {
+        if (err) {
+          res.writeHead(404, 'File not found');
+          res.write(err);
+          res.end();
+          console.error(err);
+        }
+        res.end();
+      });
+
       break;
     }
     default: {
       notFound(res);
+
       break;
     }
   }
